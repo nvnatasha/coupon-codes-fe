@@ -17,13 +17,13 @@
 }
 
 body {
-  background-color: var(--beige);
-  color: var(--charcoal);
-  display: flex;
   height: 100vh;
+  display: flex;
+  flex-direction: row;
+  margin: 0px;
 }
 
-button {
+/* button {
   background-color: var(--blue);
   border: none;
   border-radius: 5px;
@@ -32,7 +32,7 @@ button {
   font-size: 0.9em;
   padding: 10px 15px;
   transition: background-color 0.3s ease;
-}
+} */
 
 input {
   border: 1px solid #ddd;
@@ -45,7 +45,7 @@ input {
 /* ASIDE */
 aside {
   align-items: flex-end;
-  background-color: var(--blue);
+  background-color: #c188ff;
   color: #fff;
   display: flex;
   flex-direction: column;
@@ -73,50 +73,121 @@ h2 {
 nav {
   display: flex;
   flex-direction: column;
-  margin-top: 100px;
+  align-items: end;
 }
 
-nav button {
-  background-color: transparent;
-  border-radius: 5px 0px 0px 5px;
-  color: #fff;
-  font-size: 1.4em;
-  padding: 20px;
-  text-align: right;
+
+/* CSS */
+nav > button {
+  --b: 3px;   /* border thickness */
+  --s: .45em; /* size of the corner */
+  --color: #2c2c2c;
+  
+  padding: calc(.5em + var(--s)) calc(.9em + var(--s));
+  color: var(--color);
+  --_p: var(--s);
+  background:
+    conic-gradient(from 90deg at var(--b) var(--b),#0000 90deg,var(--color) 0)
+    var(--_p) var(--_p)/calc(100% - var(--b) - 2*var(--_p)) calc(100% - var(--b) - 2*var(--_p));
+  transition: .3s linear, color 0s, background-color 0s;
+  outline: var(--b) solid rgb(237, 202, 229);
+  outline-offset: .6em;
+  font-size: 16px;
+
+  border: 0;
+
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  margin: 15px;
+  cursor: pointer;
 }
 
-nav button.active-nav {
-  background-color: var(--beige);
-  color: var(--blue);
-}
+nav > button:hover,
+nav > button:focus-visible{
 
-nav button:not(.active-nav):hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: white;
-} 
+  outline-color: var(rgb(216, 168, 255));
+  outline-offset: .05em;
+  background-color: #e787ff;;
+  opacity: 0.5;
+}
 
 /* MAIN */
 main {
-  flex-grow: 1;
-  overflow-y: auto;
-  padding: 20px;
-  width: 80%;
+  display: flex;
+  flex-direction: column;
+  align-content: flex-start;
+  padding: 10px;
+  width: 75%;
+
+  background-image: url('my-folder/images/Loverbackground.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  overflow-y: scroll;
+}
+
+img {
+  pointer-events: none;
+  position:fixed;
+  width: 200%;
+  height: 100%;
+  z-index: -1;
 }
 
 h3 {
   color: var(--charcoal);
   font-size: 1.3em;
+  font-weight: 400;
 }
 
 /* ADD MERCHANT */
-.add-new-button {
-  background-color: var(--green);
-  font-size: 1em;
-  padding: 10px 20px;
+ #add-new-button, .merchant-options > .discard-merchant-edits,
+.merchant-options > .delete-merchant, .merchant-options > .submit-merchant-edits, .view-merchant-coupons, .view-merchant-items, .edit-merchant  {
+  display: block;
+  width: 110px;
+  height: 40px;
+  line-height: 40px;
+  font-size: 11px;
+  font-family: sans-serif;
+  text-decoration: none;
+  color: #626262;
+  border: 2px solid #333;
+  letter-spacing: 2px;
+  text-align: center;
+  position: relative;
+  transition: all .35s;
+  background: rgb(237, 202, 229);
+  cursor: pointer;
 }
 
-.add-new-button:hover {
-  background-color: var(--dk-green);
+#add-new-item-button, #add-new-button, .merchant-options > .discard-merchant-edits,
+.merchant-options > .delete-merchant, .merchant-options > .submit-merchant-edits, .view-merchant-coupons, .view-merchant-items, .edit-merchant span{
+  position: relative;
+  z-index: 2;
+}
+
+#add-new-item-button:after, #add-new-button:after, .merchant-options > .discard-merchant-edits:after,
+.merchant-options > .delete-merchant:after, .merchant-options > .submit-merchant-edits:after, .view-merchant-coupons:after, .view-merchant-items:after, .edit-merchant:after  {
+  position: absolute;
+  content: "";
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 100%;
+  background: #aa5aff;
+  transition: all .35s;
+  opacity: 0.5;
+}
+
+#add-new-item-button:hover, #add-new-button:hover, .merchant-options > .discard-merchant-edits:hover,
+.merchant-options > .delete-merchant:hover, .merchant-options > .submit-merchant-edits:hover, .merchant-options > button:hover, .view-merchant-coupons:hover, .view-merchant-items:hover , .edit-merchant:hover {
+  color: #000000;
+}
+
+#add-new-item-button:hover:after, #add-new-button:hover:after, .merchant-options > .discard-merchant-edits:hover:after,
+.merchant-options > .delete-merchant:hover:after, .merchant-options > .submit-merchant-edits:hover:after, .view-merchant-coupons:hover:after, .view-merchant-items:hover:after , .edit-merchant:hover:after {
+  width: 100%;
 }
 
 .display-options {
@@ -132,7 +203,7 @@ h3 {
 }
 
 /* MERCHANT + ITEM CARDS */
-.merchant, .item {
+.merchant, .item, .coupon{
   align-items: center;
   background-color: #fff;
   border-radius: 8px;
@@ -149,6 +220,24 @@ h3 {
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
   transform: translateY(-5px);
 }
+
+section#coupons-view {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction:row;  
+  justify-content: space-evenly;
+}
+
+.coupon {
+  flex-direction: column;
+  text-align: center;
+  width: 30%;
+}
+
+.coupon p,
+.coupon h2 {
+  margin: 5px;
+} 
 
 .items-view {
   display: flex;
@@ -173,7 +262,7 @@ h3 {
   gap: 10px;
 }
 
-.merchant-options > button:hover {
+/* .merchant-options > button:hover {
   background-color: var(--beige);
   color: var(--blue);
 }
@@ -194,7 +283,7 @@ h3 {
 .merchant-options > .discard-merchant-edits:hover,
 .merchant-options > .delete-merchant:hover {
   color: var(--red);
-}
+} */
 
 /* STATUS MESSAGES */
 .success {
