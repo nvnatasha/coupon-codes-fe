@@ -37,6 +37,9 @@ submitMerchantButton.addEventListener('click', (event) => {
 //Global variables
 let merchants;
 let items;
+let currentPage = 1
+const itemsPerPage = 11
+const merchantsPerPage = 10
 
 //Page load data fetching
 Promise.all([fetchData('merchants'), fetchData('items')])
@@ -140,40 +143,57 @@ function submitMerchant(event) {
 
 // Functions that control the view 
 function showMerchantsView() {
+  currentPage = 1
   showingText.innerText = "All Merchants"
   addRemoveActiveNav(merchantsNavButton, itemsNavButton)
   addNewButton.dataset.state = 'merchant'
-  show([merchantsView, addNewButton])
-  hide([itemsView])
+  show([merchantsView, addNewButton, displayOptions])
+  hide([itemsView, couponsView])
   displayMerchants(merchants)
 }
 
 function showItemsView() {
+  currentPage = 1
   showingText.innerText = "All Items"
   addRemoveActiveNav(itemsNavButton, merchantsNavButton)
   addNewButton.dataset.state = 'item'
-  show([itemsView])
+  show([itemsView, displayOptions])
   hide([merchantsView, merchantForm, addNewButton, couponsView])
   displayItems(items)
 }
 
 function showMerchantItemsView(id, items) {
+  currentPage = 1
   showingText.innerText = `All Items for Merchant #${id}`
-  show([itemsView])
-  hide([merchantsView, addNewButton, couponsView])
+  show([itemsView, displayOptions])
+  hide([merchantsView, merchantForm, addNewButton, couponsView])
   addRemoveActiveNav(itemsNavButton, merchantsNavButton)
   addNewButton.dataset.state = 'item'
   displayItems(items)
 }
 
+function showMerchantCouponsView(id, coupons) {
+  showingText.innerText = `All Coupons for Merchant #${id}`
+  show([couponsView, displayOptions])
+  hide([merchantsView, addNewButton])
+  addRemoveActiveNav(itemsNavButton, merchantsNavButton)
+  displayMerchantCoupons(coupons)
+}
+
 // Functions that add data to the DOM
 function displayItems(items) {
   itemsView.innerHTML = ''
-  let firstHundredItems = items.slice(0, 99)
-  firstHundredItems.forEach(item => {
+  const totalItems = items.length
+  const totalItemPages = Math.ceil(totalItems / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  
+  const paginatedItems = items.length <= itemsPerPage ? items : items.slice(startIndex, endIndex);
+
+    paginatedItems.forEach(item => {
     let merchant = findMerchant(item.attributes.merchant_id).attributes.name
     itemsView.innerHTML += `
-     <article class="item" id="item-${item.id}">
+      <article class="item" id="item-${item.id}">
           <h2>${item.attributes.name}</h2>
           <p>${item.attributes.description}</p>
           <p>$${item.attributes.unit_price}</p>
@@ -181,11 +201,20 @@ function displayItems(items) {
         </article>
     `
   })
+  if (totalItemPages > 1) {
+    addPaginationControls(itemsView, totalItemPages, displayItems.bind(null,items)) 
+    }
 }
 
 function displayMerchants(merchants) {
     merchantsView.innerHTML = ''
-    merchants.forEach(merchant => {
+    const startIndex = (currentPage - 1) * merchantsPerPage;
+    const endIndex = startIndex + merchantsPerPage;
+    const paginatedMerchants = merchants.slice(startIndex, endIndex);
+    const totalMerchants = merchants.length
+    let totalMerchantPages = Math.ceil (totalMerchants / merchantsPerPage)
+
+    paginatedMerchants.forEach(merchant => {
         merchantsView.innerHTML += 
         `<article class="merchant" id="merchant-${merchant.id}">
           <h3 class="merchant-name">${merchant.attributes.name}</h3>
@@ -204,6 +233,7 @@ function displayMerchants(merchants) {
           </div>
         </article>` 
     })
+    addPaginationControls(merchantsView, totalMerchantPages, displayMerchants.bind(null, merchants))
 }
 
 function displayAddedMerchant(merchant) {
@@ -239,13 +269,11 @@ function getMerchantCoupons(event) {
   fetchData(`merchants/${merchantId}/coupons`)
   .then(response => {
     console.log("Coupon data from fetch:", response.data)
-    displayMerchantCoupons(response.data);
+    showMerchantCouponsView(merchantId, response.data);
   })
 }
 
 function displayMerchantCoupons(coupons) {
-  show([couponsView])
-  hide([merchantsView, itemsView, displayOptions])
 
   couponsView.innerHTML = ``
   coupons.forEach((coupon) =>{
@@ -256,10 +284,37 @@ function displayMerchantCoupons(coupons) {
           <p>${coupon.attributes.code}</p>
           <p>${coupon.attributes.discount_type}</p>
           <p>${coupon.attributes.discount_value}</p>
-          <p class="merchant-name-in-item">Merchant: ${merchant}</p>
+          <p class="merchant-name-in-coupon">Merchant: ${merchant}</p>
       </article>`
       })
 }
+
+function addPaginationControls(view, totalPages, displayFunction) {
+  const paginationDiv = document.createElement('div');
+        paginationDiv.classList.add('pagination-controls');
+      
+  if (currentPage > 1) {
+  const prevButton = document.createElement('button');
+        prevButton.innerText = 'Previous';
+        prevButton.addEventListener('click', () => {
+          currentPage--;
+          displayFunction();
+          });
+          paginationDiv.appendChild(prevButton);
+        }
+      
+        if (currentPage < totalPages) {
+          const nextButton = document.createElement('button');
+          nextButton.innerText = 'Next';
+          nextButton.addEventListener('click', () => {
+            currentPage++;
+            displayFunction();
+          });
+          paginationDiv.appendChild(nextButton);
+        }
+      
+        view.appendChild(paginationDiv);
+      }
 
 //Helper Functions
 function show(elements) {

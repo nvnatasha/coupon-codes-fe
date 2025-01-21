@@ -262,28 +262,26 @@ section#coupons-view {
   gap: 10px;
 }
 
-/* .merchant-options > button:hover {
-  background-color: var(--beige);
-  color: var(--blue);
+.pagination-controls {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: flex-start;
+  margin: 1rem 0;
 }
 
-.merchant-options > .submit-merchant-edits {
-  background-color: var(--green);
+#merchants-view .pagination-controls button {
+  margin: 0 0.5rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  width: 12%;
 }
 
-.merchant-options > .submit-merchant-edits:hover {
-  color: var(--green);
+#items-view .pagination-controls button {
+  margin: 0 0.5rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  width: 80%;
 }
-
-.merchant-options > .discard-merchant-edits,
-.merchant-options > .delete-merchant {
-  background-color: var(--red);
-}
-
-.merchant-options > .discard-merchant-edits:hover,
-.merchant-options > .delete-merchant:hover {
-  color: var(--red);
-} */
 
 /* STATUS MESSAGES */
 .success {
