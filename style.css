@@ -142,7 +142,7 @@ h3 {
 }
 
 /* ADD MERCHANT */
- #add-new-button, .merchant-options > .discard-merchant-edits,
+#add-new-item-button, #add-new-button, .merchant-options > .discard-merchant-edits,
 .merchant-options > .delete-merchant, .merchant-options > .submit-merchant-edits, .view-merchant-coupons, .view-merchant-items, .edit-merchant  {
   display: block;
   width: 110px;
@@ -239,7 +239,7 @@ section#coupons-view {
   margin: 5px;
 } 
 
-.items-view {
+#items-view, #single-merchant-view {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
